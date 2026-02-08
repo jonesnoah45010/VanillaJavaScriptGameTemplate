@@ -61,6 +61,7 @@ If you’re using git:
 git clone <YOUR_REPO_URL_HERE>
 cd <YOUR_PROJECT_FOLDER>
 ```
+Alternatively, just download the repo as a zip file, unzip and navigate to it in your command line using `cd`
 
 ---
 
