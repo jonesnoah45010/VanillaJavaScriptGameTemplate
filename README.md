@@ -28,3 +28,142 @@ Each document is designed to be read independently, but together they explain:
 - how to safely customize the game without breaking the core loop
 
 
+
+
+
+
+
+
+# Running the App Locally
+
+These instructions work on **macOS, Windows, and Linux**.
+
+---
+
+## 1) Prerequisites
+
+- **Python 3.9+** (recommended)
+- **pip** (comes with Python)
+- A terminal:
+  - macOS: Terminal
+  - Windows: PowerShell / Windows Terminal
+  - Linux: your preferred terminal
+
+---
+
+## 2) Clone or Download the Project
+
+If you downloaded the project as a ZIP file, unzip it and open a terminal in the project’s root folder (the folder containing `main.py`).
+
+If you’re using git:
+
+```bash
+git clone <YOUR_REPO_URL_HERE>
+cd <YOUR_PROJECT_FOLDER>
+```
+
+---
+
+## 3) Create a Virtual Environment (Recommended)
+
+### macOS / Linux
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+```
+
+### Windows (PowerShell)
+```powershell
+py -m venv .venv
+.\.venv\Scripts\Activate.ps1
+```
+
+> If PowerShell blocks activation, run:
+> ```powershell
+> Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
+> ```
+> then try activating again.
+
+---
+
+## 4) Install Dependencies
+
+Install all required Python packages from `requirements.txt`:
+
+### macOS / Linux
+```bash
+pip install -r requirements.txt
+```
+
+### Windows
+```powershell
+py -m pip install -r requirements.txt
+```
+
+---
+
+## 5) Run the App
+
+Start the server by running:
+
+### macOS / Linux
+```bash
+python3 main.py
+```
+
+### Windows
+```powershell
+py main.py
+```
+
+You should see terminal output indicating that the server is running.
+
+---
+
+## 6) Open the App in Your Browser
+
+Open your web browser and navigate to the local URL printed in the terminal.
+
+Common defaults include:
+
+- `http://127.0.0.1:5000`
+- `http://localhost:5000`
+- `http://127.0.0.1:8000`
+- `http://localhost:8000`
+
+Use **exactly** the URL shown in your terminal output if it differs.
+
+---
+
+## Stopping the Server
+
+To stop the server, return to the terminal and press:
+
+```
+Ctrl + C
+```
+
+---
+
+## Troubleshooting
+
+### Missing packages / `ModuleNotFoundError`
+Make sure your virtual environment is activated, then re-run:
+
+```bash
+pip install -r requirements.txt
+```
+
+### Port already in use
+Another process is using the same port.
+
+You can:
+- stop the other process, or
+- change the port in `main.py` (if supported), then restart the app.
+
+### Static files not loading
+Ensure you are running the app from the **project root directory** (the same directory that contains `main.py`).
+
+---
+
+If you run into issues, check the terminal output carefully—it usually tells you exactly what went wrong.
