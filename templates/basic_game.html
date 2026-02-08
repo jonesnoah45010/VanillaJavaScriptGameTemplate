@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Basic Game</title>
+
+  <style>
+    html, body { margin: 0; height: 100%; overflow: hidden; background: #000; }
+    canvas { display: block; }
+
+    /* Debug / Controls UI (unchanged from your current file) */
+    #debug-ui {
+      position: fixed;
+      top: 12px;
+      left: 12px;
+      z-index: 9999;
+      width: 320px;
+      max-width: calc(100vw - 24px);
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      font-size: 14px;
+      color: #fff;
+      user-select: none;
+      background: rgba(0,0,0,0.55);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 12px;
+      padding: 10px 12px;
+      backdrop-filter: blur(6px);
+    }
+    #debug-ui .ui-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+    #debug-ui .title { font-weight: 650; letter-spacing: 0.2px; }
+    #debug-ui button {
+      background: rgba(255,255,255,0.08);
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.18);
+      border-radius: 10px;
+      padding: 4px 10px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+    #debug-ui button:hover { background: rgba(255,255,255,0.12); }
+    #debug-ui button:active { transform: translateY(1px); }
+    #debug-ui .content { display: block; }
+    #debug-ui.collapsed .content { display: none; }
+    #debug-ui label { display: flex; gap: 8px; align-items: center; cursor: pointer; }
+    #debug-ui input[type="checkbox"] { width: 16px; height: 16px; accent-color: #8be9fd; cursor: pointer; }
+    #debug-ui .hint { margin-top: 6px; font-size: 12px; opacity: 0.85; }
+    #debug-ui .section { margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.12); }
+    #debug-ui ul { margin: 6px 0 0 18px; padding: 0; }
+    #debug-ui li { margin: 3px 0; font-size: 12px; opacity: 0.92; line-height: 1.25; }
+  </style>
+
+  <!-- Ammo global loader -->
+  <script src="/static/js/ammo/ammo.wasm.js"></script>
+
+  <!-- Optional importmap -->
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "/static/js/three/three.module.js"
+    }
+  }
+  </script>
+</head>
+
+<body>
+  <script type="module">
+    import * as THREE from "/static/js/three/three.module.js";
+    import {
+      createGameState,
+      startCore,
+      stepCore
+    } from "/static/js/game_core.js";
+
+    // =========================
+    // CONFIG
+    // =========================
+    const CONFIG = {
+      // Debug
+      DEBUG_MODE: false,
+
+      // World
+      GRAVITY: -9.81,
+      PLANE_SIZE: 1000,
+
+      // Player physics
+      PLAYER_RADIUS: 2,
+      PLAYER_HEIGHT: 8,
+      PLAYER_MASS: 1,
+
+      PLAYER_STARTING_POSITION: new THREE.Vector3(0, 0, 0),
+      PLAYER_STARTING_YAW_DEG: 180,
+
+      // Movement tuning
+      PLAYER_MOVE_MIDAIR: true,
+      PLAYER_MID_AIR_DAMPEN: 0.5,
+      PLAYER_JUMP_IMPULSE: 25,
+
+      PLAYER_MAX_SPEED: 15.0,
+      PLAYER_ACCEL: 55.0,
+      PLAYER_BRAKE: 75.0,
+      PLAYER_AIR_ACCEL: 18.0,
+      PLAYER_AIR_BRAKE: 8.0,
+
+      PLAYER_SIDE_DAMP_GROUND: 18.0,
+      PLAYER_SIDE_DAMP_AIR: 2.0,
+      PLAYER_USE_STRAFE_DAMP: true,
+
+      TURN_SPEED: 3,
+
+      // Wall slide tuning
+      PLAYER_DEFAULT_FRICTION: 2.5,
+      WALL_SLIDE_FRICTION: 0.15,
+      WALL_SLIDE_MAX_FALL_SPEED: -8.0,
+      WALL_NORMAL_MAX_Y: 0.30,
+      GROUND_NORMAL_MIN_Y: 0.10,
+      GROUND_BAND_FRACTION: 0.10,
+
+      // Wall climb tuning
+      WALL_CLIMB_SPEED: 9.5,
+      WALL_CLIMB_STICK_SPEED: 3.0,
+      WALL_CLIMB_MIN_NORMAL: 0.5,
+      WALL_CLIMB_EXIT_COOLDOWN: 0.3,
+
+      // Animation / latch
+      CLIMB_ANIM_GRACE_SECONDS: 1.0,
+      CLIMB_ANIM_PROBE_DISTANCE: 3.5,
+      CLIMB_ANIM_PROBE_START_PAD: 0.25,
+
+      // Animation ground probe
+      ANIM_PROBE_LENGTH: 10,
+      ANIM_FALL_TRIGGER_DISTANCE: 4.0,
+      ANIM_GROUND_SNAP_DISTANCE: 3.0,
+      ANIM_AIR_MIN_TIME: 0.10,
+      ANIM_GROUND_PROBE_OFFSETS: [
+        new THREE.Vector3(0, 0, 0),
+        new THREE.Vector3(0.35, 0, 0.35),
+        new THREE.Vector3(-0.35, 0, 0.35),
+        new THREE.Vector3(0.35, 0, -0.35),
+        new THREE.Vector3(-0.35, 0, -0.35),
+      ],
+
+      // Camera
+      CAMERA_MIN_DISTANCE: 20,
+      CAMERA_MAX_DISTANCE: 40,
+      CAMERA_VERTICAL_OFFSET: 20,
+      CAMERA_DEFAULT_PITCH: 0.55,
+      CAMERA_MIN_PITCH: 0.15,
+      CAMERA_MAX_PITCH: 1.20,
+      CAMERA_BELOW_PLAYER_ENABLE_HEIGHT: 18,
+      CAMERA_MIN_PITCH_BELOW: -0.65,
+      MOUSE_YAW_SENSITIVITY: 0.0025,
+      MOUSE_PITCH_SENSITIVITY: 0.0020,
+      GROUND_PLANE_Y: 0,
+
+      // Player visuals
+      PLAYER_FBX_IDLE:   "/static/player_fbx/idle.fbx",
+      PLAYER_FBX_MOVE:   "/static/player_fbx/move.fbx",
+      PLAYER_FBX_IN_AIR: "/static/player_fbx/in_air.fbx",
+      PLAYER_FBX_CLIMB:  "/static/player_fbx/climb.fbx",
+
+      PLAYER_MODEL_SCALE:    new THREE.Vector3(0.05, 0.05, 0.05),
+      PLAYER_MODEL_OFFSET:   new THREE.Vector3(0, -8/2, 0), // overwritten in start() after we know PLAYER_HEIGHT
+      PLAYER_MODEL_ROTATION: new THREE.Euler(0, 0, 0),
+
+      MOVE_SPEED_THRESHOLD: 0.6,
+      FADE_SECONDS: 0.15,
+    };
+
+    // Ensure offset uses configured height
+    CONFIG.PLAYER_MODEL_OFFSET = new THREE.Vector3(0, -CONFIG.PLAYER_HEIGHT / 2, 0);
+
+    // =========================
+    // State (created + owned by core)
+    // =========================
+    let state = createGameState();
+
+    // =========================
+    // Main Loop
+    // =========================
+    let lastT = performance.now();
+
+    function update(dt) {
+      // This is the primary per-frame loop; core does the heavy lifting.
+      stepCore(state, CONFIG, dt);
+    }
+
+    function frame(t) {
+      const dt = Math.min(0.05, (t - lastT) / 1000);
+      lastT = t;
+      update(dt);
+      requestAnimationFrame(frame);
+    }
+
+    async function start() {
+      // This is your initialization step.
+      await startCore(state, CONFIG);
+      requestAnimationFrame(frame);
+    }
+
+    // Start!
+    start();
+  </script>
+</body>
+</html>

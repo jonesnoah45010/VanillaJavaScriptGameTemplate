@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Home Page</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+    <script defer src="{{ url_for('static', filename='js/index.js') }}"></script>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="profile">
+            <img src="{{ url_for('static', filename='images/profile_pic.png') }}" alt="Profile Image">
+        </div>
+        <ul class="nav-links">
+            <li><a href="#" class="nav-tab active" data-tab="home">Home</a></li>
+            <li><a href="#" class="nav-tab" data-tab="robot_sim">Game</a></li>
+        </ul>
+    </div>
+
+    <div class="content">
+        <div id="home" class="tab-content active-content">
+            <h1>Home Page</h1>
+            <p>This is the home page</p>
+            <p>Got to the Game tab to play the game</p>
+        </div>
+        <div id="robot_sim" class="tab-content">
+            <h1>Game</h1>
+            <p>A JavaScript Game</p>
+            <a href="/basic_game"><button>Play Game</button></a>
+        </div>
+    </div>
+
+
+</body>
+
+</html>
+
+
+
+

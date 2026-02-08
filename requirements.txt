@@ -1,0 +1,6 @@
+requests
+Flask
+Werkzeug
+cryptography
+Flask-JWT-Extended
+PyJWT
