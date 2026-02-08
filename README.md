@@ -1,7 +1,9 @@
 # Vanilla JavaScript Game Template
 
-A lightweight template for building a **3D game using vanilla JavaScript** (no frameworks), focused on clarity, extensibility, and learning-by-modifying.
+A lightweight template for building a **3D game using vanilla JavaScript** (no frameworks), focused on clarity, extensibility, and learning-by-modifying. 
 
+---
+Note: The app should run on any version of Python but python3.11 is the most tried and true.
 ---
 
 ## 📚 Documentation
