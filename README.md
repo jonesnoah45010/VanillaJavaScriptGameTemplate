@@ -19,6 +19,18 @@ Start here to understand and customize the game:
 - **`GameCoreConfigsDoc.md`**  
   Complete reference for all `CONFIG` variables, what they do, and how changing them affects gameplay and feel.
 
+- **`Lesson1AddKickAnimation.md`**  
+  Instructions for how to add a kick animation to static/js/game_core.js, see lesson1-game_core_kick.js for finished code.
+
+- **`Lesson1AddKickCrateBehavior.md`**  
+  Instructions for how to add physical kick trigger to a crate object in static/js/game_core.js, see lesson2-game_core_kick_crate.js for finished code. Assumes you have already finished Lesson1.
+
+- **`Lesson3AddPointsFromDestroyingCrates.md`**  
+  Instructions for how to add crate destruction and points to static/js/game_core.js, see lesson3-game_core_kick_crate_points.js for finished code. Assumes you have already finished Lesson2.
+
+- **`Lesson4AddNPC.md`**  
+  Instructions for how to add friendly NPC to static/js/game_core.js, see lesson4-game_core_kick_crate_points-npc.js for finished code. Assumes you have already finished Lesson3.
+
 ---
 
 Each document is designed to be read independently, but together they explain:
